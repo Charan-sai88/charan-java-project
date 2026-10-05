@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Unable to complete request</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/">Counter<span>simple billing</span></a></header>
+<main class="receipt-page">
+    <section class="panel error-page">
+        <p class="eyebrow">REQUEST NOT COMPLETED</p>
+        <h1>Something needs attention.</h1>
+        <p th:text="${message}">Please check your request and try again.</p>
+        <a class="button button-dark" href="/">Back to workspace <span aria-hidden="true">→</span></a>
+    </section>
+</main>
+</body>
+</html>

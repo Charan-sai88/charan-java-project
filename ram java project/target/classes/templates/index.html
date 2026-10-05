@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Product &amp; Billing</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/">Counter<span>simple billing</span></a>
+    <a class="top-link" href="#products">Products &amp; billing</a>
+</header>
+<main class="page">
+    <section class="intro">
+        <p class="eyebrow">STORE WORKSPACE</p>
+        <h1>Products and billing,<br>all in one place.</h1>
+        <p class="intro-copy">Keep your product list up to date and create a clear bill in a few clicks.</p>
+    </section>
+
+    <p class="notice success" th:if="${success}" th:text="${success}"></p>
+    <p class="notice error" th:if="${productError}" th:text="${productError}"></p>
+
+    <section class="panel" id="products">
+        <div class="section-heading">
+            <div><p class="eyebrow">CATALOG</p><h2>Products</h2></div>
+            <span class="count" th:text="${products.size()} + ' listed'">0 listed</span>
+        </div>
+        <div class="empty-state" th:if="${products.isEmpty()}">
+            <span class="empty-icon">+</span>
+            <h3>Your catalog starts here</h3>
+            <p>Add a product below, then select it to create your first bill.</p>
+        </div>
+        <form th:action="@{/bills}" th:object="${billForm}" method="post" th:if="${!products.isEmpty()}">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Product</th><th>Price</th><th class="quantity-col">Quantity</th></tr></thead>
+                    <tbody>
+                    <tr th:each="item : ${products}">
+                        <td>
+                            <span class="product-name" th:text="${item.name}">Product name</span>
+                            <span class="product-description" th:if="${item.description}" th:text="${item.description}">Description</span>
+                        </td>
+                        <td class="price" th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}">$0.00</td>
+                        <td class="quantity-col"><input type="number" min="0" value="0" aria-label="Quantity"
+                                                         th:field="*{quantities[__${item.id}__]}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-footer">
+                <span class="hint">Set a quantity for each product you want to include.</span>
+                <button class="button button-dark" type="submit">Create bill <span aria-hidden="true">→</span></button>
+            </div>
+        </form>
+    </section>
+
+    <section class="lower-grid">
+        <section class="panel add-panel">
+            <p class="eyebrow">CATALOG</p>
+            <h2>Add a product</h2>
+            <p class="subcopy">Add the details customers will see on their bill.</p>
+            <form th:action="@{/products}" th:object="${product}" method="post" class="stack-form">
+                <label for="name">Product name</label>
+                <input id="name" type="text" th:field="*{name}" placeholder="e.g. House blend coffee" maxlength="120" required>
+                <label for="description">Description <span class="optional">Optional</span></label>
+                <input id="description" type="text" th:field="*{description}" placeholder="A short description" maxlength="500">
+                <label for="price">Unit price</label>
+                <div class="price-input"><span>$</span><input id="price" type="number" th:field="*{price}" min="0.01" step="0.01" placeholder="0.00" required></div>
+                <button class="button button-light" type="submit">Add product <span aria-hidden="true">+</span></button>
+            </form>
+        </section>
+
+        <section class="panel recent-panel">
+            <div class="section-heading">
+                <div><p class="eyebrow">HISTORY</p><h2>Recent bills</h2></div>
+            </div>
+            <div class="empty-state compact" th:if="${recentBills.isEmpty()}">
+                <p>No bills yet. Your completed bills will show up here.</p>
+            </div>
+            <a class="bill-row" th:each="recent : ${recentBills}" th:href="@{/bills/{id}(id=${recent.id})}">
+                <span class="bill-mark">#</span>
+                <span class="bill-meta"><strong th:text="'Bill ' + ${recent.id}">Bill 1</strong><small th:text="${#temporals.format(recent.createdAt, 'MMM d, yyyy · h:mm a')}">Date</small></span>
+                <strong class="bill-amount" th:text="'$' + ${#numbers.formatDecimal(recent.total, 1, 2)}">$0.00</strong>
+                <span class="arrow" aria-hidden="true">↗</span>
+            </a>
+        </section>
+    </section>
+    <footer>PRODUCT &amp; BILLING <span>·</span> SIMPLE, CLEAR, READY TO GO</footer>
+</main>
+</body>
+</html>

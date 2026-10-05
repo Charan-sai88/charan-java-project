@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Bill #' + ${bill.id} + ' · Counter'">Bill · Counter</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/">Counter<span>simple billing</span></a>
+    <a class="top-link" href="/">← Back to workspace</a>
+</header>
+<main class="receipt-page">
+    <div class="receipt-actions"><a class="text-link" href="/">← Back to products</a><button class="button button-dark print-button" onclick="window.print()">Print bill <span aria-hidden="true">↗</span></button></div>
+    <article class="receipt">
+        <div class="receipt-top">
+            <div><p class="eyebrow">PAYMENT SUMMARY</p><h1>Bill <span th:text="'#' + ${bill.id}">#1</span></h1></div>
+            <span class="paid-tag">COMPLETE</span>
+        </div>
+        <p class="receipt-date" th:text="${#temporals.format(bill.createdAt, 'MMMM d, yyyy · h:mm a')}">Date</p>
+        <div class="receipt-rule"></div>
+        <div class="receipt-labels"><span>ITEM</span><span>QTY</span><span>PRICE</span></div>
+        <div class="receipt-item" th:each="item : ${bill.items}">
+            <span><strong th:text="${item.productName}">Product</strong><small th:text="'$' + ${#numbers.formatDecimal(item.unitPrice, 1, 2)} + ' each'">$0.00 each</small></span>
+            <span class="receipt-qty" th:text="${item.quantity}">1</span>
+            <strong class="receipt-line-total" th:text="'$' + ${#numbers.formatDecimal(item.lineTotal, 1, 2)}">$0.00</strong>
+        </div>
+        <div class="receipt-rule"></div>
+        <div class="total-line"><span>Total</span><strong th:text="'$' + ${#numbers.formatDecimal(bill.total, 1, 2)}">$0.00</strong></div>
+        <p class="receipt-thanks">Thank you for your purchase.</p>
+    </article>
+    <footer>PRODUCT &amp; BILLING <span>·</span> SIMPLE, CLEAR, READY TO GO</footer>
+</main>
+</body>
+</html>
